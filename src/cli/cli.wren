@@ -10,8 +10,17 @@ class StackTrace {
     _fiber = fiber
     _trace = Mirror.reflect(fiber).stackTrace
   }
+  errorToString_ {
+    var fbr = Fiber.new { _fiber.error.toString }
+    var result = fbr.try()
+    if (fbr.error) {
+      return "UnknownError: toString on Error object aborted"
+    } else {
+      return result
+    }
+  }
   print() {
-    Stderr.print(_fiber.error)
+    Stderr.print(errorToString_)
     var out = _trace.frames.map { |f|
         return "at %( f.methodMirror.signature ) (%( f.methodMirror.moduleMirror.name ) line %( f.line ))"
     }.join("\n")
